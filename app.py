@@ -5,6 +5,10 @@ from datetime import date
 app = Flask(__name__)
 DB = 'tasks.db'
 
+import os
+print("DB PATH:", os.path.abspath(DB))
+
+
 # Initialize DB if not exists
 def init_db():
     conn = sqlite3.connect(DB)
