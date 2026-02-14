@@ -1,0 +1,214 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* PAGE BACKGROUND */
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(120deg, #f7f8fa 60%, #e3e6f3 100%);
+}
+
+/* HEADER */
+.tasks-header {
+    padding: 10px 30px;
+    
+
+   /* GAP REDUCED */
+}
+
+.back-btn {
+    background: #1f2937;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #374151;
+}
+
+/* MAIN CARD */
+.tasks-wrapper {
+    margin: 0 auto 40px;
+ /* top reduced */
+ /* TOP GAP FIXED */
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    padding: 40px 50px;
+}
+
+.tasks-wrapper h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+/* FILTERS */
+.filters-horizontal {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.filters-horizontal input,
+.filters-horizontal select {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.filters-horizontal input:focus,
+.filters-horizontal select:focus {
+    border-color: #6366
+f;
+    box-shadow: 0 0 0 3px rgba(99, 102, 255, 0.3);
+}
+/* =========================
+   TASK CARD DESIGN
+========================= */
+
+.tasks-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.task-card {
+    background: #eff0f1;
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+
+
+}
+
+
+/* =========================
+   STATUS BADGES
+========================= */
+
+.status {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status.pending {
+  background: #fde68a;
+}
+
+.status.in-progress {
+  background: #bfdbfe;
+}
+
+.status.completed {
+  background: #bbf7d0;
+}
+
+
+/* Edit button */
+.task-actions .edit-btn {
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.task-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    font-size: 16px;        /* 👈 icon size */
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.icon-btn:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+}
+
+.edit-icon {
+    color: #4a90e2;
+}
+
+.delete-icon {
+    color: #e94e4e;
+}
+
+.success-msg {
+    display: none;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+}
+
+
+/* EMPTY STATE */
+.no-tasks {
+    width: 100%;
+    margin-top: 60px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+}
+
+/* Create link button style */
+.create-link {
+    margin-top: 12px;
+    display: inline-block;
+
+    padding: 10px 18px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.create-link:hover {
+    background: #222;
+}
+

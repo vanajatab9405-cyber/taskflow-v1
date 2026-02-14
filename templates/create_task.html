@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <title>Create Task</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+
+<body class="main-bg">
+
+<div class="container-flex">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h1 class="sidebar-title">Taskflow</h1>
+        <a href="/tasks" class="sidebar-btn">View All Tasks</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content-flex">
+
+        <section class="card-form">
+            <!-- SUCCESS MESSAGE -->
+              <div id="successMsg" class="success-msg">
+    Task saved successfully ✅
+               </div>
+
+               <div id="errorMsg" class="error-msg"></div>
+
+
+            <h1 class="form-title">Create Task</h1>
+
+            <form id="taskForm">
+
+                <!-- ROW 1 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Task Name</label>
+                        <input type="text" id="name" name="name" placeholder="Task Name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+                <!-- ROW 2 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" id="start_date" name="start_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="due_date">End Date</label>
+                        <input type="date" id="due_date" name="due_date" required>
+                    </div>
+                </div>
+
+                <!-- ROW 3 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" name="category" placeholder="Category">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status" required>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <!-- BUTTON -->
+                <button type="submit" class="form-btn">Create Task</button>
+
+            </form>
+        </section>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/create_task.js') }}"></script>
+</body>
+</html>

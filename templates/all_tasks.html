@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Tasks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
+</head>
+<body>
+
+    <div class="tasks-header">
+        <button class="back-btn" id="backBtn">← Back</button>
+    </div>
+
+    <div class="tasks-wrapper">
+        <h1>All Tasks</h1>
+
+        <div class="filters-horizontal">
+            <input type="text" id="filterName" placeholder="Filter by name">
+            <input type="date" id="filterStartDate">
+            <input type="date" id="filterEndDate">
+            <select id="sortAlpha">
+                <option value="none">Sort Alphabetically</option>
+                <option value="asc">A → Z</option>
+                <option value="desc">Z → A</option>
+            </select>
+        </div>
+
+       
+        <div id="tasksContainer" class="tasks-container">
+
+        
+            {% if tasks|length == 0 %}
+
+    <!-- EMPTY STATE -->
+    <p class="no-tasks">
+        No tasks found.<br>
+        <a href="/create" class="create-link">Create your first task</a>
+    </p>
+
+           {% else %}
+
+
+
+
+    {% for task in tasks %}
+    <div class="task-card"
+     data-name="{{ task.name }}"
+     data-start-date="{{ task.start_date }}"
+     data-end-date="{{ task.due_date }}"
+     data-status="{{ task.status }}">
+
+        <h2 class="task-name">{{ task.name }}</h2>
+        <p class="task-desc">{{ task.description }}</p>
+
+        <p class="task-dates">
+            Start: {{ task.start_date }} | Due: {{ task.due_date }}
+        </p>
+
+        <p class="task-category">{{ task.category }}</p>
+
+        <span class="status {{ task.status }}">{{ task.status }}</span>
+
+        
+
+        <!-- ACTION BUTTONS -->
+        <a href="/edit/{{ task.id }}" class="icon-btn edit-icon">✏️</a>
+
+        <button class="delete-icon" data-id="{{ task.id }}">
+            🗑️
+        </button>
+    </div>
+    {% endfor %}
+
+{% endif %}
+
+</div>
+
+
+    <script src="{{ url_for('static', filename='js/task.js') }}"></script>
+</body>
+</html>
