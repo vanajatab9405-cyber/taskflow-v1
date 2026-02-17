@@ -1,31 +1,35 @@
-from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
-from datetime import date
+from flask import render_template, request, redirect, url_for
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
-DB = 'tasks.db'
 
 import os
-print("DB PATH:", os.path.abspath(DB))
+
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url:
+    database_url = database_url.replace("postgres://", "postgresql://")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or "sqlite:///local.db"
 
 
-# Initialize DB if not exists
-def init_db():
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS tasks (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT NOT NULL,
-                        description TEXT,
-                        start_date TEXT NOT NULL,
-                        due_date TEXT NOT NULL,
-                        category TEXT,
-                        status TEXT NOT NULL
-                    )''')
-    conn.commit()
-    conn.close()
 
-init_db()
+db = SQLAlchemy(app)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    start_date = db.Column(db.String(20), nullable=False)
+    due_date = db.Column(db.String(20), nullable=False)
+    category = db.Column(db.String(100))
+    status = db.Column(db.String(50), nullable=False)
+
+with app.app_context():
+    db.create_all()
+
 
 @app.route('/')
 def home():
@@ -35,115 +39,71 @@ def home():
 def create_task():
     return render_template('create_task.html')
 
-
 @app.route('/add', methods=['POST'])
 def add_task():
-    try:
-        name = request.form.get('name', '').strip()
+    name = request.form.get('name', '').strip()
 
-        if not name:
-            return {"success": False, "message": "Task name is required"}, 400
+    if not name:
+        return {"success": False, "message": "Task name is required"}, 400
 
-        start_date = request.form['start_date']
-        due_date = request.form['due_date']
+    start_date = request.form['start_date']
+    due_date = request.form['due_date']
 
-        if start_date > due_date:
-            return {"success": False, "message": "End date must be after start date"}, 400
+    if start_date > due_date:
+        return {"success": False, "message": "End date must be after start date"}, 400
 
+    description = request.form.get('description', '')
+    category = request.form.get('category', '')
+    status = request.form['status']
 
-        description = request.form.get('description', '')
-        start_date = request.form['start_date']
-        due_date = request.form['due_date']
-        category = request.form.get('category', '')
-        status = request.form['status']
+    new_task = Task(
+        name=name,
+        description=description,
+        start_date=start_date,
+        due_date=due_date,
+        category=category,
+        status=status
+    )
 
-        conn = sqlite3.connect(DB)
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO tasks (name, description, start_date, due_date, category, status) VALUES (?, ?, ?, ?, ?, ?)',
-            (name, description, start_date, due_date, category, status)
-        )
-        conn.commit()
-        conn.close()
+    db.session.add(new_task)
+    db.session.commit()
 
-        return {"success": True, "message": "Task saved successfully"}, 200
+    return {"success": True, "message": "Task saved successfully"}, 200
 
-    except Exception as e:
-        return {"success": False, "message": str(e)}, 500
-    
+@app.route('/tasks')
+def all_tasks():
+    tasks = Task.query.all()
+    return render_template('all_tasks.html', tasks=tasks)
 
 @app.route('/edit/<int:id>')
 def edit_task(id):
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tasks WHERE id=?", (id,))
-    t = cursor.fetchone()
-    conn.close()
-
-    task = {
-        'id': t[0],
-        'name': t[1],
-        'description': t[2],
-        'start_date': t[3],
-        'due_date': t[4],
-        'category': t[5],
-        'status': t[6]
-    }
-
+    task = Task.query.get_or_404(id)
     return render_template('edit_task.html', task=task)
 
 @app.route('/update/<int:id>', methods=['POST'])
 def update_task(id):
-    name = request.form['name']
-    description = request.form.get('description', '')
-    start_date = request.form['start_date']
-    due_date = request.form['due_date']
-    category = request.form.get('category', '')
-    status = request.form['status']
+    task = Task.query.get_or_404(id)
 
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE tasks
-        SET name=?, description=?, start_date=?, due_date=?, category=?, status=?
-        WHERE id=?
-    """, (name, description, start_date, due_date, category, status, id))
-    conn.commit()
-    conn.close()
+    task.name = request.form['name']
+    task.description = request.form.get('description', '')
+    task.start_date = request.form['start_date']
+    task.due_date = request.form['due_date']
+    task.category = request.form.get('category', '')
+    task.status = request.form['status']
+
+    db.session.commit()
 
     return redirect(url_for('all_tasks'))
 
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete_task(id):
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM tasks WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
+    task = Task.query.get_or_404(id)
+    db.session.delete(task)
+    db.session.commit()
 
     return {"success": True}
 
 
 
-@app.route('/tasks')
-def all_tasks():
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM tasks')
-    tasks_data = cursor.fetchall()
-    tasks = []
-    for t in tasks_data:
-        tasks.append({
-            'id': t[0],
-            'name': t[1],
-            'description': t[2],
-            'start_date': t[3],
-            'due_date': t[4],
-            'category': t[5],
-            'status': t[6]
-        })
-    conn.close()
-    return render_template('all_tasks.html', tasks=tasks)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
